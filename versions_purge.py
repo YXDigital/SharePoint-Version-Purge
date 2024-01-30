@@ -43,33 +43,16 @@ def get_files_in_folder(folder):
     return project_files
 
 
-def clean_file_versions(folder_to_scan, max_versions, extension_lists):
+def clean_file_versions(folder_to_scan, max_versions):
     for folder in folder_to_scan:
         projects_folder = get_files_in_folder(folder)  # type: File
         for file in projects_folder:
-            if Path(file.serverRelativeUrl).suffix in extension_lists:
                 print(f'Name: {file.name}, Versions: {len(get_file_versions(file.serverRelativeUrl).versions)} ')
                 if len(get_file_versions(file.serverRelativeUrl).versions) > max_versions:
                     clean_versions(get_file_versions(file.serverRelativeUrl), max_versions)
 
 
-def clean_single_file_version(file_to_clean, max_versions):
-    generated_file_to_clean = f'{root_folder}/{file_to_clean}'
-    if len(get_file_versions(generated_file_to_clean).versions) > max_versions:
-        print(f'This file has {len(get_file_versions(generated_file_to_clean).versions)} versions')
-        versions_to_delete = get_file_versions(generated_file_to_clean).versions[:-max_versions]
-        print(versions_to_delete)
-        for version in versions_to_delete:  # type: FileVersion
-            print(version.version_label)
-            get_file_versions(generated_file_to_clean).versions.delete_by_label(version.version_label).execute_query()
-
-
 if __name__ == "__main__":
-
     # INPUT FOR THE PROJECT YEAR THAT NEEDS TO BE SCANNED OR PROJECT FOLDERS
     folders_to_scan = ["IBA_HD_log/BM001/dat_continuous/24/01/15"]
     clean_file_versions([folder for folder in folders_to_scan], 1)
-
-    # INPUT FOR ONE SINGLE FILE THAT NEEDS TO BE CLEANED
-    single_file_path = ''
-    # clean_single_file_version(single_file_path, 8)
